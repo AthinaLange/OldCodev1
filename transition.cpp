@@ -4,168 +4,113 @@
 #include   <iostream>
 #include   <complex>
 #include   "variable.h"
+#include   "variable-trajectory.h"
 #include   "functions.h"
 #include   "transition.h"
 using namespace std;
 
 #include <gsl/gsl_rng.h>
 
+double cosb1,cosb2, sinb1,sinb2,cosg1,cosg2,sing1,sing2;
 
 //    Transition Matrices ___________________________________________________________________________-
 
-
 /* Q1 */
 
-double cosb1,cosb2, sinb1,sinb2,cosg1,cosg2,sing1,sing2;
-
 double wwa0_00(){
-
     double x;
-
     x = 1 + cosa;
-    return x/2.0;
-
+    return x*0.5;
 }
 
 double wwa0_01(){
-
     double x;
-
     x = -sina;
-    return x/2.0;
-
+    return x*0.5;
 }
 
 double wwa0_02(){
-
     double x;
-
     x = -sina;
-    return x/2.0;
-
+    return x*0.5;
 }
 
-
-
 double wwa0_03(){
-
     double x;
-
-    x = 1.0 -cosa;
-    return x/2.0;
-
+    x = 1.0 - cosa;
+    return x*0.5;
 }
 
 double wwa0_10(){
-
     double x;
-
-    x =  sina;
-    return x/2.0;
-
+    x = sina;
+    return x*0.5;
 }
 
 double wwa0_11(){
-
     double x;
-
     x = 1.0 + cosa;
-    return x/2.0;
-
+    return x*0.5;
 }
 
 double wwa0_12(){
-
     double x;
-
     x = -1.0 + cosa;
-    return x/2.0;
-
+    return x*0.5;
 }
 
 double wwa0_13(){
-
     double x;
-
     x = -sina;
-    return  x/2.0;
-
+    return  x*0.5;
 }
 
 double wwa0_20(){
-
     double x;
-
     x =  sina;
-    return x/2.0;
-
+    return x*0.5;
 }
-
 
 double wwa0_21(){
-
     double x;
-
     x = -1.0 + cosa ;
-    return x/2.0;
-
+    return x*0.5;
 }
-
 
 double wwa0_22(){
-
     double x;
-
     x = 1.0 + cosa;
-    return x/2.0;
-
+    return x*0.5;
 }
 
-
 double wwa0_23(){
-
     double x;
-
     x = -sina ;
-    return x/2.0;
-
+    return x*0.5;
 }
 
 double wwa0_30(){
-
     double x;
-
-    x = 1- cosa;
-    return x/2.0;
-
+    x = 1.0 - cosa;
+    return x*0.5;
 }
 
 double wwa0_31(){
-
     double x;
-
     x =  sina;
-    return x/2.0;
-
+    return x*0.5;
 }
 
 double wwa0_32(){
-
     double x;
-
     x =  sina;
-    return x/2.0;
-
+    return x*0.5;
 }
 
-
 double wwa0_33(){
-
     double x;
-
     x = 1 + cosa;
-    return x/2.0;
-
+    return x*0.5;
 }
 
 //         W_{a 1}
@@ -173,176 +118,104 @@ double wwa0_33(){
 /* _____________________________________________  */
 
 double wwa1_00(){
-
-
-
     return 9999.0;
-
 }
 
-
 double wwa1_01(){
-
     double x;
-
-    x = Pdotdhat*Pdotdhat - de;
+    x = Pdotdhat * Pdotdhat - de;
     if (x <= 0)
         return -7777.0;
     else
         return sqrt(x);
-
 }
 
 double wwa1_02(){
     double x;
-
-    x = Pdotdhat*Pdotdhat - de;
+    x = Pdotdhat * Pdotdhat - de;
     if (x <= 0)
         return -7777.0;
     else
         return sqrt(x);
-
-
-
 }
-
 
 double wwa1_03(){
-
     double x;
-
-    x = Pdotdhat*Pdotdhat - 2.0*de;
+    x = Pdotdhat * Pdotdhat - 2.0*de;
     if (x <= 0)
         return -7777.0;
     else
         return sqrt(x);
-
-
 }
 
-
 double wwa1_10() {
-
     double x;
-
     x = Pdotdhat * Pdotdhat + de;
-
     return sqrt(x);
-
-
 }
 
 double wwa1_11(){
-
-
     return 9999.0;
-
 }
 
 double wwa1_12(){
-
     return 9999.0;
-
 }
 
-double wwa1_13(){
-
+double wwa1_13() {
     double x;
-
-    x = Pdotdhat*Pdotdhat - de;
+    x = Pdotdhat * Pdotdhat - de;
     if (x <= 0)
         return -7777.0;
     else
         return sqrt(x);
-
-
 }
 
-
-
 double wwa1_20(){
-
     double x;
-
-    x = Pdotdhat*Pdotdhat + de;
-
+    x = Pdotdhat * Pdotdhat + de;
     return sqrt(x);
-
-
 }
 
 double wwa1_21(){
-
     double x;
-
-
     return 9999.0;
-
 }
 
 double wwa1_22(){
-
     double x;
-
     return 9999.0;
-
 }
 
 double wwa1_23(){
-
     double x;
-
-    x = Pdotdhat*Pdotdhat - de;
+    x = Pdotdhat * Pdotdhat - de;
     if (x <= 0)
         return -7777.0;
     else
         return sqrt(x);
-
-
-
 }
 
 double wwa1_30(){
-
     double x;
-
-    x = Pdotdhat*Pdotdhat + 2.0*de;
+    x = Pdotdhat * Pdotdhat + 2.0*de;
     return sqrt(x);
-
-
 }
-
 
 double wwa1_31(){
-
     double x;
-
-    x = Pdotdhat*Pdotdhat + de;
+    x = Pdotdhat * Pdotdhat + de;
     return sqrt(x);
-
-
 }
-
 
 double wwa1_32(){
-
     double x;
-
-    x = Pdotdhat*Pdotdhat + de;
+    x = Pdotdhat * Pdotdhat + de;
     return sqrt(x);
-
-
-
-
 }
 
-
 double wwa1_33(){
-
     return 9999.0;
-
-
-
 }
 
 //   W_{a2}
@@ -350,649 +223,394 @@ double wwa1_33(){
 /* _____________________________________________  */
 
 double wwa2_00(){
-
     double x;
-
-    x = sina -  sinb2;
+    x = sina - sinb2;
     return x;
-
 }
 
-
 double wwa2_01(){
-
     double x;
-
     x = cosb2;
     return x;
-
 }
 
 double wwa2_02(){
-
     double x;
-
     x = cosb2;
     return x;
-
 }
-
 
 double wwa2_03(){
-
     double x;
-
     x = sina  + sinb2;
     return  x;
-
 }
 
-
 double wwa2_10(){
-
     double x;
-
     x = cosa;
     return x;
-
 }
 
 double wwa2_11(){
-
     double x;
-
-
     return 0.0;
-
 }
 
 double wwa2_12(){
-
     double x;
-
     return 0.0;
-
 }
 
 double wwa2_13(){
-
     double x;
-
     x = cosa;
     return x;
-
 }
 
-
-
 double wwa2_20(){
-
     double x;
-
     x = cosa;
     return x;
-
 }
 
 double wwa2_21(){
-
     double x;
-
-
     return 0.0;
-
 }
 
 double wwa2_22(){
-
     double x;
-
     return 0.0;
-
 }
 
 double wwa2_23(){
-
     double x;
-
     x = cosa;
     return x;
-
 }
 
 double wwa2_30(){
-
     double x;
-
-    x = sina +  sinb2;
-    return  -x;
-
+    x = sina + sinb2;
+    return -x;
 }
-
 
 double wwa2_31(){
-
     double x;
-
     x = cosb2;
     return x;
-
 }
-
 
 double wwa2_32(){
-
     double x;
-
     x = cosb2;
     return x;
-
 }
 
-
 double wwa2_33(){
-
     double x;
-
-    x = -sina  + sinb2;
-    return  x;
-
+    x = -sina + sinb2;
+    return x;
 }
 
 //   Wb0
 
 double wwb0_00(){
-
     double x;
-
     x = cosa;
     return x*x;
-
 }
 
 double wwb0_01(){
-
     double x;
-
-    x = cosa*sina;
+    x = cosa * sina;
     return x;
-
 }
 
 double wwb0_02(){
-
     double x;
-
-    x =  cosa*sina;
+    x = cosa * sina;
     return x;
-
 }
 
 double wwb0_03(){
-
     double x;
-
     x = sina;
     return 1.0 + x*x;
-
 }
 
 double wwb0_10(){
-
     double x;
-
-    x = -cosa*sina;
+    x = -cosa * sina;
     return x;
-
 }
 
 double wwb0_11(){
-
     double x;
-
     x = cosa;
     return x*x;
-
 }
 
 double wwb0_12(){
-
     double x;
-
     x = cosa;
     return x*x;
-
 }
-
 
 double wwb0_13(){
-
     double x;
-
-    x = cosa*sina;
+    x = cosa * sina;
     return -x;
-
 }
 
-
-double wwb0_20(){
-
+double wwb0_20() {
     double x;
-
-    x = cosa*sina;
+    x = cosa * sina;
     return -x;
-
 }
-
-
 
 double wwb0_21(){
-
     double x;
-
-
     x = cosa;
     return x*x;
-
 }
 
 double wwb0_22(){
-
     double x;
-
     x = cosa;
     return x*x;
-
 }
-
 
 double wwb0_23(){
-
     double x;
-
-    x = cosa*sina;
-    return  x;
-
+    x = cosa * sina;
+    return x;
 }
 
-
 double wwb0_30(){
-
     double x;
-
     x = sina;
     return 1.0 + x*x;
-
 }
 
 double wwb0_31(){
-
     double x;
-
-    x = cosa*sina;
+    x = cosa * sina;
     return -x;
-
 }
 
 double wwb0_32(){
-
     double x;
-
-    x = -cosa*sina;
+    x = -cosa * sina;
     return x;
-
 }
-
 
 double wwb0_33(){
-
     double x;
-
     x = cosa;
-    return  x*x;
-
+    return x*x;
 }
-
 
 
 //  W_{b1}
 
-
 double wwb1_00(){
-
     double x;
-
     x = 1.0 - sina*sing1;
     return x;
-
 }
 
-
 double wwb1_01(){
-
     double x;
-
-    x = cosg1*sina;
+    x = cosg1 * sina;
     return x;
-
 }
 
 double wwb1_02(){
-
     double x;
-
-    x = cosg1*sina;
+    x = cosg1 * sina;
     return x;
-
 }
-
 
 double wwb1_03(){
-
     double x;
-
     x = 1.0 + sina*sing1;
     return x;
-
 }
 
-
 double wwb1_10(){
-
     double x;
-
-    x = cosa*sing1;
+    x = cosa * sing1;
     return -x;
-
 }
 
 double wwb1_11(){
-
     double x;
-
-    x = cosa*cosg1;
-
-
+    x = cosa * cosg1;
     return x;
-
 }
 
 double wwb1_12(){
-
     double x;
-
-    x = cosa*cosg1;
-
-
+    x = cosa * cosg1;
     return x;
-
-
 }
 
 double wwb1_13(){
-
     double x;
-
-    x = cosa*sing1;
+    x = cosa * sing1;
     return x;
-
-
-
 }
 
-
-
 double wwb1_20(){
-
     double x;
-
-    x = cosa*sing1;
+    x = cosa * sing1;
     return -x;
-
 }
 
 double wwb1_21(){
-
     double x;
-
-    x = cosa*cosg1;
-
-
+    x = cosa * cosg1;
     return x;
-
 }
 
 double wwb1_22(){
-
     double x;
-
-    x = cosa*cosg1;
-
-
+    x = cosa * cosg1;
     return x;
-
-
 }
 
 double wwb1_23(){
-
     double x;
-
-    x = cosa*sing1;
+    x = cosa * sing1;
     return x;
-
-
-
 }
 
 double wwb1_30(){
-
     double x;
-
     x = 1.0 + sina*sing1;
     return x;
-
 }
 
-
 double wwb1_31(){
-
     double x;
-
-    x = -cosg1*sina;
+    x = -cosg1 * sina;
     return x;
-
 }
 
 double wwb1_32(){
-
     double x;
-
-    x = -cosg1*sina;
+    x = -cosg1 * sina;
     return x;
-
 }
 
-
 double wwb1_33(){
-
     double x;
-
     x = 1.0 - sina*sing1;
     return x;
-
 }
 
 
 //  W_{b2}
 
-
 double wwb2_00(){
-
     double x;
-
     x = 1.0 - sina*sing2;
     return x;
-
 }
 
-
 double wwb2_01(){
-
     double x;
-
-    x = cosg2*sina;
+    x = cosg2 * sina;
     return x;
-
 }
 
 double wwb2_02(){
-
     double x;
-
-    x = cosg2*sina;
+    x = cosg2 * sina;
     return x;
-
 }
-
 
 double wwb2_03(){
-
     double x;
-
     x = 1.0 + sina*sing2;
     return x;
-
 }
 
-
 double wwb2_10(){
-
     double x;
-
-    x = cosa*sing2;
+    x = cosa * sing2;
     return -x;
-
 }
 
 double wwb2_11(){
-
     double x;
-
-    x = cosa*cosg2;
-
-
+    x = cosa * cosg2;
     return x;
-
 }
 
 double wwb2_12(){
-
     double x;
-
-    x = cosa*cosg2;
-
-
+    x = cosa * cosg2;
     return x;
-
-
 }
 
 double wwb2_13(){
-
     double x;
-
-    x = cosa*sing2;
+    x = cosa * sing2;
     return x;
-
-
-
 }
 
-
-
 double wwb2_20(){
-
     double x;
-
-    x = cosa*sing2;
+    x = cosa * sing2;
     return -x;
-
 }
 
 double wwb2_21(){
-
     double x;
-
-    x = cosa*cosg2;
-
-
+    x = cosa * cosg2;
     return x;
-
 }
 
 double wwb2_22(){
-
     double x;
-
-    x = cosa*cosg2;
-
-
+    x = cosa * cosg2;
     return x;
-
-
 }
 
 double wwb2_23(){
-
     double x;
-
-    x = cosa*sing2;
+    x = cosa * sing2;
     return x;
-
-
-
 }
 
 double wwb2_30(){
-
     double x;
-
     x = 1.0 + sina*sing2;
     return x;
-
 }
 
-
 double wwb2_31(){
-
     double x;
-
-    x = cosg2*sina;
+    x = cosg2 * sina;
     return -x;
-
 }
 
 double wwb2_32(){
-
     double x;
-
-    x = cosg2*sina;
+    x = cosg2 * sina;
     return -x;
-
 }
-
 
 double wwb2_33(){
-
     double x;
-
     x = 1.0 - sina*sing2;
     return x;
-
 }
 
-
+/*---------------------------------------------------------*/
 
 void setwww(){
 
@@ -1110,14 +728,8 @@ void setwww(){
     www[5][3][2] = wwb2_32;
     www[5][3][3] = wwb2_33;
 
-
-
 }
 
-
-
-
-/* ______________________________________   */
 
 /* ************** Observables and initial density Matrices *********  */
 
@@ -1126,20 +738,15 @@ void setwww(){
 
 
 double wigner_harm_osc(double *x, double *p){
-
     double prod,y1,y2;
-
     int i;
-
     /* set wigner to one has it drops out of calculation for our initial
     density */
-
     return 1.0;
 }
 
 
 double dens_init_0(double *x,double *p, int k){
-
     double z;
     double g,gg;
     g = G(x); gg = g*g;
@@ -1151,131 +758,90 @@ double dens_init_0(double *x,double *p, int k){
 }
 
 double dens_init_1(double *x,double *p, int k){
-
-
     double z;
     double g,gg;
 
     g = G(x); gg = g*g;
     z = 0.5*(gg - 1.0)/(1 + gg);
-
     return (z*wigner_harm_osc(x,p));
-
 }
 
 double dens_init_2(double *x,double *p, int k){
-
     double z;
     double g, gg;
 
-
     g = G(x); gg = g*g;
     z = 0.5*(gg - 1.0)/(1 + gg);
-
-
     return (z*wigner_harm_osc(x,p));
-
 }
 
 double dens_init_3(double *x,double *p, int k){
-
     double z;
     double g,gg;
 
     g = G(x); gg = g*g;
     z = 0.5*(gg - 2*g  + 1.0)/(1 + gg);
-
     return (z*wigner_harm_osc(x,p));
-
-
 }
 
 double obs_0(double *x,double *p, int k){
-
-
     double z;
     double g,gg;
 
     g = G(x); gg = g*g;
     z = 2.0*g/(1 + gg);
     return z;
-
 }
 
 double obs_1(double *x,double *p, int k){
-
-
     double z;
     double g,gg;
 
     g = G(x); gg = g*g;
     z = (gg-1)/(1 + gg);
     return z;
-
 }
 
 double obs_2(double *x,double *p, int k){
-
-
     double z;
     double g, gg;
 
     g = G(x); gg = g*g;
     z =  (gg-1)/(1 + gg);
     return z;
-
 }
 
 double obs_3(double *x,double *p, int k){
-
-
     double z;
     double g,gg;
 
     g = G(x); gg = g*g;
     z = -2.0*g/(1 + gg);
     return z;
-
 }
 
 /* These are the matrix elements of the Hamiltonian */
 
 double H_0(double *x,double *p, int k){
-
-
     double z;
     double g,gg;
 
     z = Hb(x,p) - dE(x)/2.0;
     return z;
-
 }
 
-
 double H_1(double *x,double *p, int k){
-
-    double z;
-    double g,gg;
     return 0.0;
-
 }
 
 double H_2(double *x,double *p, int k){
-
-    double z;
-    double g, gg;
     return 0.0;
-
-
 }
 
 double H_3(double *x,double *p, int k){
-
-
     double z;
     double g,gg;
 
     z = Hb(x,p) + dE(x)/2.0;
     return z;
-
 }

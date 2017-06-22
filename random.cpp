@@ -45,7 +45,7 @@ void randnums(int rand_dim, double *rand_vec){
 void gauss_init_W(double *R, double *v){ /* Gaussian number generator  for (R,P) */
 //sample from gaussian given mean and variance
 //takes into account zero-point motion (in x and p) given a variance //assuming harmonic oscillators
-
+//used in Density part of the code
     double sigma_x, sigma_v, mean_x, mean_v;
     int i;
 

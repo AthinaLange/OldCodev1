@@ -4,6 +4,7 @@
 #include   <iostream>
 #include   <complex>
 #include   "variable.h"
+#include   "variable-trajectory.h"
 #include   "functions.h"
 using namespace std;
 

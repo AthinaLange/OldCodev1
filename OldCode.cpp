@@ -7,6 +7,7 @@
 #include   "imatrix.c"
 #include   "omp.h"
 #include   "variable.h"
+#include   "variable-trajectory.h"
 #include   "density.cpp"
 #include   "functions.cpp"
 #include   "transition.cpp"
@@ -139,14 +140,14 @@ int main(int argc, char *argv[]){
     obs[0] = obs_0; obs[1] = obs_1; obs[2] = obs_2; obs[3] = obs_3;
     obs1[0] = H_0; obs1[1] = H_1; obs1[2] = H_2; obs1[3] = H_3;
     // obs[0] = H_0; obs[1] = H_1; obs[2] = H_2; obs[3] = H_3;
-    ddd4 = delta*delta/4.0;
+    ddd4 = delta*delta*0.25;
     ddd =  delta*delta;
     TSLICE  = T/N_slice;
     Dt = TSLICE;
     Ndev = 4.0;
     bath_para(eta,w_max);       /* compute system parameters etc */
     /*
-    bath corresponds to eq. 54
+    bath corresponds to eq. 54 -- asymmetric boson
     for (i = 0; i < N_bath; i++)
        mu[i] = beta*w[i]/2.0;
     for (i = 0; i < N_bath; i++){
@@ -163,7 +164,7 @@ int main(int argc, char *argv[]){
     */
     //  bath corresponds to eq. 53
     for (i = 0; i < N_bath; i++)
-        mu[i] = beta*w[i]/2.0;
+        mu[i] = beta*w[i]*0.5;
     for (i = 0; i < N_bath; i++){
         sig[i] = 1.0/sqrt(w[i]*2.0*tanh(mu[i]));
         mww[i] = -m[i]*w[i]*w[i];
@@ -211,12 +212,11 @@ int main(int argc, char *argv[]){
             hrealsum[i][j] = 0.0;
             himagsum[i][j] = 0.0;
 
-
             hist[i][j] = 0;
         }
     monte(Nsample,R1,v);
     stream = fopen(datafilename,"a");
-    fprintf(stream,"dt %lf T %lf Nsample\n", timestep, T, Nsample);
+    fprintf(stream,"dt %lf T %lf Nsample %d\n", timestep, T, Nsample);
     for (i = 0; i < N_slice; i++)
         if (((i+1)% t_strobe) == 0)
             for (j =0; j <= (Ncut+1);j++){

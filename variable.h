@@ -3,6 +3,7 @@
 
 #include <gsl/gsl_rng.h>
 
+//separate out trajectory-dependent variables
 
 int N_bath;
 int  N_slice, Nsample, Ncut;
@@ -17,16 +18,13 @@ double (* www[6][4][4])();
 void (*force[4])(double *);
 
 
-int *SS, **hist;
+int *SS, **hist; //could use local hist and accumulate into a global hist
 double *mww;
 double *meann, *sig;
-double ddd4, ddd, ppower, de;
-double *m, *c, *w, *d, delta, **RR, **PP, *dhat, *f, *dgam, *Pperp;
-double abs_d, timestep, TSLICE, Dt, Pdotdhat;
+double *m /*mass - set to 1.0 in bath_para*/, *c/*system para */, *w /*frequency 0 system para*/, *d /*phase-space dependent */, delta /*timestep*/;
+double timestep, TSLICE, Dt /*integrating timestep */;
 
-double sina, cosa, alpha;
-
-double  *abszsum0, *abszsum1, *argzsum0, *argzsum1, **realsum, **imagsum;
-double  *habszsum0, *habszsum1, *hargzsum0, *hargzsum1, **hrealsum, **himagsum;
 
 #endif
+
+//may want to try and separate out physical system
