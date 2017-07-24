@@ -2,9 +2,9 @@
 
 using namespace std;
 
-// =========================================================================
-// VARIABLES
-// =========================================================================
+///////////////////////////////////////////////////////////////////////////////
+/// VARIABLES
+///////////////////////////////////////////////////////////////////////////////
 
 extern int N_bath;
 extern double ddd;
@@ -29,9 +29,9 @@ extern double (* www[2][4][4])();
 
 extern void (*force[4])(double *);
 
-// =========================================================================
-// FUNCTIONS
-// =========================================================================
+///////////////////////////////////////////////////////////////////////////////
+/// FUNCTIONS
+///////////////////////////////////////////////////////////////////////////////
 
 double gam(double *R){
     double x = 0.0;
@@ -55,13 +55,13 @@ void dgamma(double *R){
         dgam[i] = -c[i];
 }
 
-void Fb(double *R){ /* Pure Bath Force Field */
+void Fb(double *R){ /*!< Pure Bath Force Field */
     double x;
     for (int i= 0; i < N_bath; ++i)
         f[i] = mww[i]*R[i];
 }
 
-void F1(double *R){ /* 00 force field   */
+void F1(double *R){ /*!< 00 force field   */
     double g,h;
     g = gam(R);
     h = g/sqrt(ddd4 + g*g);
@@ -70,7 +70,7 @@ void F1(double *R){ /* 00 force field   */
     }
 }
 
-void F2(double *R){ /* 11 force field */
+void F2(double *R){ /*!< 11 force field */
     double g,h;
     g = gam(R);
     h = g/sqrt(ddd4 + g*g);
@@ -78,7 +78,7 @@ void F2(double *R){ /* 11 force field */
         f[i] = mww[i]*R[i] + h*c[i];
 }
 
-double dE(double *R){ /* Energy difference between adibiatic surface (E1 - E0) */
+double dE(double *R){ /*!< Energy difference between adiabiatic surface (E1 - E0) */
     double g;
     g = gam(R);
     g *= 4.0*g;
@@ -94,7 +94,7 @@ double G(double *R){
     return x;
 }
 
-void dd(double*R){
+void dd(double*R){ /*!< Energy */
     double x1,x2,x3;
     int i;
     x2 = gam(R);
@@ -115,7 +115,7 @@ void dd(double*R){
         dhat[i] /= abs_d;
 }
 
-void integ_step(double *r, double *v, double dt, int Sa){ // Velocity Verlet
+void integ_step(double *r, double *v, double dt, int Sa){ /*!< Velocity Verlet */
     double y;
     y = 0.5*dt*dt;
     for (int i = 0; i < N_bath; ++i)
@@ -128,7 +128,7 @@ void integ_step(double *r, double *v, double dt, int Sa){ // Velocity Verlet
         v[i] += y*f[i];
 }
 
-void bath_para(double eta, double w_max){ /* Parameters for bath (corresponding to an ohmic spectral density) */
+void bath_para(double eta, double w_max){ /*!< Parameters for bath (corresponding to an ohmic spectral density) */
     double w_0;
     w_0 = (1 - exp(-w_max))/N_bath;
     for (int i = 0; i < N_bath; ++i){
@@ -138,7 +138,7 @@ void bath_para(double eta, double w_max){ /* Parameters for bath (corresponding 
     }
 }
 
-double U( double *r,double *v, int Sa, double t){ // Adiabatic Propagator
+double U( double *r,double *v, int Sa, double t){ /*!< Adiabatic Propagator */
     double  dE0, phase,dt,x1,x2,x3,v1,v2,v3;
     int Nsteps;
 
@@ -174,7 +174,9 @@ double U( double *r,double *v, int Sa, double t){ // Adiabatic Propagator
     return phase;
 }
 
-// TRANSITION MATRIX ===========================================================
+///////////////////////////////////////////////////////////////////////////////
+/// TRANSITION MATRIX
+///////////////////////////////////////////////////////////////////////////////
 
 
 /* Q1 */
@@ -425,10 +427,13 @@ void setwww(){
 
 /* ______________________________________   */
 
-/* ************** Observables and initial density Matrices *********  */
+///////////////////////////////////////////////////////////////////////////////
+/// Observables and initial density Matrices
+///////////////////////////////////////////////////////////////////////////////
 
 
-/* Definition of initial density matrix element */
+
+/*! Definition of initial density matrix element */
 
 
 double wigner_harm_osc(double *x, double *p){
@@ -499,7 +504,7 @@ double obs_3(double *x,double *p){
     return z;
 }
 
-/* These are the matrix elements of the Hamiltonian */
+/*! Matrix elements of the Hamiltonian */
 
 double H_0(double *x,double *p){
     double z;
