@@ -49,34 +49,25 @@ double *m; /*!< Mass of particles */
 double *c; /*!< */
 double *w; /*!< */
 double *f; /*!< Force on particles */
+
 double *dgam; /*!< */
 double *mww; /*!< */
 double *sig; /*!< Sigma/Variance */
 double *RR; /*!< */
 double *PP; /*!< */
-double alpha;
-double *Pperp; /*!< Perpendicular component of momentum */
 double *mu; /*!< */
 double TSLICE; /*!< */
 
-
-double abszsum0;
 double *abszsum1;
-double argzsum0;
 double *argzsum1;
-double habszsum0;
 double *habszsum1;
-double hargzsum0;
 double *hargzsum1;
-complex<double> I(0,1);
 
-double (*phi)(double*, double*); /*!< Density Matrix*/
 double (*dens_init[4])(double*, double*); /*!< Initial Density Matrix*/
 double (*obs[4])(double*, double*); /*!< Observable Matrix*/
 double (*obs1[4])(double*, double*); /*!< Another Observable Matrix*/
-
-
 void (*force[4])(double *); /*!< Hellman-Feynman Forces*/
+
 
 // ================================================================
 // MAIN
@@ -88,6 +79,7 @@ int main(int argc, char *argv[]){
     double  *R1,  *v;
     double w_max, eta, T;
     int  i,init_seed;
+
     int Nblock = 1024;
     int t_strobe = 1;
 
@@ -127,6 +119,7 @@ int main(int argc, char *argv[]){
     mu = new double[N_bath];
     sig =  new double[2*N_bath];
     dgam = new double[N_bath];
+
     R1 = new double[N_bath];
     v = new double[N_bath];
     f = new double[N_bath];
@@ -135,6 +128,7 @@ int main(int argc, char *argv[]){
     w = new double[N_bath];
     RR = new double[N_bath];
     PP = new double[N_bath];
+
     Pperp = new double[N_bath];
     abszsum1  = new double[N_slice];
     argzsum1  = new double[N_slice];
@@ -190,7 +184,26 @@ int main(int argc, char *argv[]){
     ///////////////////////////////////////////////////////////////////////////////
     /// PROCESSING TREE
     ///////////////////////////////////////////////////////////////////////////////
-    density(R1,v);
+    density(R1, v);
+/*#pragma omp parallel for num_threads(8)
+    {
+        for (int i = 0; i < NN_sample; ++i){
+            density(x,p);
+        /*    if (((i+1) % Nblock) == 0){
+                l  = 1.0/(i+1);
+                stream = fopen(datafilename,"a");
+                for (k = 0; k < N_slice; k++)
+                    if ( ((k+1) % t_strobe) == 0) {
+                        for (j = 0; j <=(Ncut+1); j++){
+                            fprintf(stream,"%d %lf %d %lf %lf %lf %lf  %lf %lf %lf %lf%.6lf\n", i+1, Dt*(k+1), j, (abszsum1[k])*l, (argzsum1[k])*l, realsum[k][j]*l, imagsum[k][j]*l,(habszsum1[k])*l, (hargzsum1[k])*l, hrealsum[k][j]*l, himagsum[k][j]*l, hist[k][j]*l );
+                            printf("%d %lf %d %lf %lf %lf %lf %lf %lf %lf %lf %.6lf\n", i+1, Dt*(k+1), j, (abszsum1[k])*l, (argzsum1[k])*l,realsum[k][j]*l ,imagsum[k][j]*l,(habszsum1[k])*l, (hargzsum1[k])*l, hrealsum[k][j]*l, himagsum[k][j]*l, hist[k][j]*l);              }
+                    }
+                fclose(stream);
+            }
+        }
+    }*/
+
+
     stream = fopen(datafilename,"a");
     fprintf(stream,"dt %lf T %lf Nsample %d\n", timestep, T, Nsample);
     for (int i = 0; i < N_slice; ++i){
@@ -206,8 +219,10 @@ int main(int argc, char *argv[]){
 
     delete [] abszsum1; delete [] argzsum1; delete [] habszsum1; delete [] hargzsum1;
     delete [] Pperp; delete [] mww; delete [] mu; delete [] sig;
+
     delete [] dgam; delete [] R1; delete [] v; delete [] f;
-    delete [] c; delete [] m; delete [] w; delete [] RR; delete [] PP;
+    delete [] c; delete [] m; delete [] w;
+
 
     return 0;
 

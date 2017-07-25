@@ -8,29 +8,16 @@ using namespace std;
 
 extern int N_bath; /*!< Size of bath */
 extern int Ncut; /*!< Truncation parameter */
-double abs_d; /*!< Absolute Value Non-adiabatic Coupling Matrix*/
-double Pdotdhat; /*!< Parallel component of momentum*/
-double sina;
-double cosa;
-double de; /*!< */
-extern double alpha;
-
 extern double *m; /*!< Mass of particles */
-extern double *RR; /*!< */
-extern double *PP; /*!< */
-double *dhat; /*!< */
-extern int  N_slice; /*!< Number of time intervals */
-extern double *Pperp; /*!< Perpendicular component of momentum */
+extern int timestep;
+extern int N_slice; /*!< Number of time intervals */
 extern double TSLICE; /*!< */
+
 extern double *abszsum1;
 extern double *argzsum1;
 extern double *habszsum1;
 extern double *hargzsum1;
-extern complex<double> I;
 
-
-double (*www[2][4][4])(); /*!< Non-adiabatic Coupling Matrix*/
-extern double (*phi)(double*, double*); /*!< Density Matrix*/
 extern double (*dens_init[4])(double*, double*); /*!< Initial Density Matrix*/
 extern double (*obs[4])(double*, double*); /*!< Observable Matrix*/
 extern double (*obs1[4])(double*, double*); /*!< Another Observable Matrix*/
@@ -38,7 +25,13 @@ extern double (*obs1[4])(double*, double*); /*!< Another Observable Matrix*/
 extern const gsl_rng_type * TT; /*!< Random Number Generator seed based on Gaussian Distribution */
 extern gsl_rng * rr;
 
-complex<double> initd(1,0);
+double abs_d; /*!< Absolute Value Non-adiabatic Coupling Matrix*/
+double Pdotdhat; /*!< Parallel component of momentum*/
+double sina;
+double cosa;
+double de; /*!< */
+double *dhat; /*!< */
+double (*www[2][4][4])(); /*!< Non-adiabatic Coupling Matrix*/
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,17 +40,25 @@ complex<double> initd(1,0);
 
 int  density(double *x,double *p){
 
-    int SS0,SS1,SS2,SS3,NNjmp = 0,signPdotdhat;
-    double phase0 = 0.0,xx;
-    double p0,p1,p2,p3,ap0,ap1,ap2,ap3;
+    int SS0, SS1, SS2, SS3, NNjmp = 0, signPdotdhat;
+    double phase0 = 0.0, xx;
+    double p0, p1, p2, p3, ap0, ap1, ap2, ap3;
     double dn2;
-    complex<double> z = 1.0;
-    complex<double> oldz;
 
     ///////////////////////////////////////////////////////////////////////////////
     /// ALLOCATING MEMORY
     ///////////////////////////////////////////////////////////////////////////////
-
+    complex<double> z(1,0);
+    complex<double> oldz;
+    complex<double> initd(1,0);
+    complex<double> I(0,1);
+    double *Pperp; /*!< Perpendicular component of momentum */
+    double (*phi)(double*, double*); /*!< Density Matrix*/
+    double *RR;
+    double *PP;
+    RR = new double[N_bath];
+    PP = new double[N_bath];
+    Pperp = new double[N_bath];
     dhat = new double[N_bath];
 
 
@@ -67,7 +68,7 @@ int  density(double *x,double *p){
 
     gauss_init_W(x, p); /*!< Creates initial random sampling */
     double yy = 4.0*(gsl_rng_uniform (rr));
-    /*! Setting initial surface value */
+    /*!< Setting initial surface value */
     if (yy < 1.0)
         SS3 = (SS0 = 0);
     else if (yy < 2.0){
@@ -82,7 +83,8 @@ int  density(double *x,double *p){
         SS3 = (SS0 = 3);
     initd = dens_init[SS3](x,p);
     z = 4.0;
-    /*! Allocating values for position and momentum from Gaussian */
+
+    /*!< Allocating values for position and momentum from Gaussian */
     for (int l = 0; l < N_bath; ++l){
         RR[l] = x[l];
         PP[l] = p[l];
@@ -104,11 +106,11 @@ int  density(double *x,double *p){
         z *= exp(I * phase0);
 
         ///////////////////////////////////////////////////////////////////////////////
-        /// NON_ADIABATIC PROPAGATOR
+        /// NON-ADIABATIC PROPAGATOR
         ///////////////////////////////////////////////////////////////////////////////
-        dd(RR); // non-adiabatic coupling matrix
-        de = dE(RR); /*!< Energy */
-        alpha = 0.0;
+        dd(RR); /*!< calculating non-adiabatic coupling matrix */
+        de = dE(RR); /*!< calculating energy */
+        double alpha = 0.0;
         Pdotdhat = 0;
         for (int i = 0; i < N_bath; ++i) {
             Pdotdhat += PP[i] * dhat[i];
@@ -123,7 +125,7 @@ int  density(double *x,double *p){
         sina = sin(alpha);
         cosa = cos(alpha);
 
-        /*! Importance Sampling - non-adiabatic coupling matrix gives probabilities */
+        /*!< Importance Sampling - non-adiabatic coupling matrix gives probabilities */
         ap0 = fabs(p0 = ((www[1][SS0][0]() < -7775.0) ? 0.0 : www[0][SS0][0]()));
         ap1 = fabs(p1 = ((www[1][SS0][1]() < -7775.0) ? 0.0 : www[0][SS0][1]()));
         ap2 = fabs(p2 = ((www[1][SS0][2]() < -7775.0) ? 0.0 : www[0][SS0][2]()));
@@ -134,7 +136,8 @@ int  density(double *x,double *p){
         cout << "Prob:" << "ap0: " << ap0 <<", ap1: "<< ap1 <<", ap2: " << ap2 <<", ap3:"<< ap3 << endl;
         oldz = z;
         SS2 = SS1;
-        /*! choose new surface based on probabilities from matrix above
+
+        /*!< choose new surface based on probabilities from matrix above
          * calculates new values for the probability weighting
          */
         if (xx < ap0) {
@@ -155,7 +158,7 @@ int  density(double *x,double *p){
             cout << SS1 << endl;
         }
 
-        /*! increases jump counter if a jump was undergone,
+        /*!< increases jump counter if a jump was undergone,
          * and exiting if jump counter too high (past truncation value)
          */
         if (SS0 != SS1)
@@ -163,7 +166,8 @@ int  density(double *x,double *p){
         if (NNjmp > Ncut)
             return 0;
 
-        /*! updating momentum values */
+
+        /*!< updating momentum values */
         if (www[1][SS0][SS1]() != 9999.0){
             for (int i = 0; i < N_bath; ++i) {
                 PP[i] = Pperp[i] + signPdotdhat * www[1][SS0][SS1]() * dhat[i];
@@ -192,8 +196,7 @@ int  density(double *x,double *p){
     /// DEALLOCATING MEMEORY
     ///////////////////////////////////////////////////////////////////////////////
 
-    delete [] dhat;
-
+    delete [] Pperp; delete [] dhat; delete [] RR; delete [] PP;
     return 0;
 }
 
