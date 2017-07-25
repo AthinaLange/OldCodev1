@@ -43,6 +43,8 @@ extern double (*obs1[4])(double*, double*);
 extern const gsl_rng_type * TT;
 extern gsl_rng * rr;
 
+complex<double> initd(1,0);
+
 ///////////////////////////////////////////////////////////////////////////////
 /// PROCESSING TREE
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,6 +77,7 @@ int  density(double *x,double *p){
     }
     else
         SS3 = (SS0 = 3);
+    initd = dens_init[SS3](x,p);
     SS[0] = SS0;
     z = 4.0;
     /*! Allocating values for position and momentum from Gaussian */
@@ -175,12 +178,12 @@ int  density(double *x,double *p){
         /// WRITING SUM VALUES OUT (Solving Integral for Observable and Initial Density)
         ///////////////////////////////////////////////////////////////////////////////
         phi = obs[SS1]; /*!< Observable 1 function */
-        abszsum1[l] += real(z*phi(RR,PP)*dens_init[SS3](x,p));
-        argzsum1[l] += imag(z*phi(RR,PP)*dens_init[SS3](x,p));
+        abszsum1[l] += real(z*phi(RR,PP)*initd);
+        argzsum1[l] += imag(z*phi(RR,PP)*initd);
 
         phi = obs1[SS1]; /*!< Observable 2 (Hamiltonian) function */
-        habszsum1[l] += real(z*phi(RR,PP)*dens_init[SS3](x,p));
-        hargzsum1[l] += imag(z*phi(RR,PP)*dens_init[SS3](x,p));
+        habszsum1[l] += real(z*phi(RR,PP)*initd);
+        hargzsum1[l] += imag(z*phi(RR,PP)*initd);
     }
 
     return 0;
