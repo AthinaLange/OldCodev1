@@ -48,20 +48,13 @@ double delta; /*!< MD Integrating Timestep \f$ (\delta) \f$*/
 
 double ddd; /*!< \f$ \delta^2\f$ */
 double ddd4; /*!< \f$ \delta^2 / 4\f$*/
-double abs_d; /*!< Absolute Value Non-adiabatic Coupling Matrix*/
-double Pdotdhat; /*!< Parallel component of momentum*/
-double sina;
-double cosa;
-double de; /*!< */
 double *m; /*!< Mass of particles */
 double *c; /*!< */
 double *w; /*!< */
 double *f; /*!< Force on particles */
-double *dhat; /*!< */
 double *dgam; /*!< */
 double *mww; /*!< */
 double *sig; /*!< Sigma/Variance */
-double *Pperp; /*!< Perpendicular component of momentum */
 double *mu; /*!< */
 double TSLICE; /*!< Time per timeslice*/
 
@@ -71,14 +64,11 @@ double *argzsum1;
 double *habszsum1;
 double *hargzsum1;
 
-double (*phi)(double*, double*); /*!< Density Matrix*/
 double (*dens_init[4])(double*, double*); /*!< Initial Density Matrix*/
 double (*obs[4])(double*, double*); /*!< Observable Matrix*/
 double (*obs1[4])(double*, double*); /*!< Another Observable Matrix*/
-
-
 void (*force[4])(double *); /*!< Hellman-Feynman Forces*/
-double (*www[2][4][4])(); /*!< Non-adiabatic Coupling Matrix*/
+
 
 // ================================================================
 // MAIN
@@ -127,14 +117,12 @@ int main(int argc, char *argv[]){
     mu = new double[N_bath];
     sig =  new double[2*N_bath];
     dgam = new double[N_bath];
-    dhat = new double[N_bath];
     R1 = new double[N_bath];
     v = new double[N_bath];
     f = new double[N_bath];
     c = new double[N_bath];
     m = new double[N_bath];
     w = new double[N_bath];
-    Pperp = new double[N_bath];
     abszsum1  = new double[N_slice];
     argzsum1  = new double[N_slice];
     habszsum1  = new double[N_slice];
@@ -222,8 +210,8 @@ int main(int argc, char *argv[]){
     ///////////////////////////////////////////////////////////////////////////////
 
     delete [] abszsum1; delete [] argzsum1; delete [] habszsum1; delete [] hargzsum1;
-    delete [] Pperp; delete [] mww; delete [] mu; delete [] sig;
-    delete [] dgam; delete [] dhat; delete [] R1; delete [] v; delete [] f;
+    delete [] mww; delete [] mu; delete [] sig;
+    delete [] dgam; delete [] R1; delete [] v; delete [] f;
     delete [] c; delete [] m; delete [] w;
 
     return 0;
