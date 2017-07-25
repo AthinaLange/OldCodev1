@@ -1,21 +1,3 @@
-/*!
- * \mainpage
- * \brief Using a Trotter Approximation to calculate a quantum-classical non-adiabatic approximation to
- * separate the quantum and the quasi-classical degrees of freedom to allow a surface-hopping scheme to
- * be implemented that creates a tree-like structure.
- *
- * This code follows one of the possible paths through the tree structure. The non-adiabatic propagator
- * determines the likelihood of a jump based on importance sampling
- *
- * \author Donal MacKernan and Athina Lange.
- * \date 24.7.17
- */
-
-/*!
- * \brief This code initisalizes the system and then calculates the expectation value of the Nsample iterations
- * of the tree sample.
- */
-
 #include   <stdio.h>
 #include   <math.h>
 #include   <iostream>
@@ -26,9 +8,24 @@
 using namespace std;
 #include <gsl/gsl_rng.h>
 
+/*!
+ *  \brief Using a Trotter Approximation to calculate a quantum-classical non-adiabatic approximation to
+ * separate the quantum and the quasi-classical degrees of freedom to allow a surface-hopping scheme to
+ * be implemented that creates a tree-like structure.
+ *
+ * This code follows one of the possible paths through the tree structure. The non-adiabatic propagator
+ * determines the likelihood of a jump based on importance sampling
+ *
+ * \author Donal MacKernan and Athina Lange.
+ * \date 24.7.17
+ */
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
-/// VARIABLES
+/// SYSTEM INPUT
 ///////////////////////////////////////////////////////////////////////////////
 
 char  datafilename[80];
@@ -43,21 +40,21 @@ int Ncut; /*!< Truncation parameter */
 double timestep; /*!< Size of time interval */
 int Nsample; /*!< Sample Size (No. of trees calculated) */
 double beta; /*!< Inverse Temperature */
+double delta; /*!< MD Integrating Timestep*/
 double ppower; /*!< */
-double delta; /*!< MD Integrating Timestep \f$ (\delta) \f$*/
 
-double ddd; /*!< \f$ \delta^2\f$ */
-double ddd4; /*!< \f$ \delta^2 / 4\f$*/
+double ddd4; /*!< */
+double ddd; /*!< */
 double *m; /*!< Mass of particles */
 double *c; /*!< */
 double *w; /*!< */
 double *f; /*!< Force on particles */
+
 double *dgam; /*!< */
 double *mww; /*!< */
 double *sig; /*!< Sigma/Variance */
 double *mu; /*!< */
-double TSLICE; /*!< Time per timeslice*/
-
+double TSLICE; /*!< */
 
 double *abszsum1;
 double *argzsum1;
@@ -79,17 +76,20 @@ int main(int argc, char *argv[]){
 
     double  *R1,  *v;
     double w_max, eta, T;
-    int  i, init_seed;
+    int  i,init_seed;
 
-    ///////////////////////////////////////////////////////////////////////////////
-    /// SYSTEM INPUT
-    ///////////////////////////////////////////////////////////////////////////////
+    int Nblock = 1024;
+    int t_strobe = 1;
 
-    /*!< Set up the use of a Gaussian Random Number Generator from GSL */
+    /*! Sets up the use of a Gaussian Random Number Generator from GSL */
     gsl_rng_env_setup();
     TT = gsl_rng_default;
     rr = gsl_rng_alloc(TT);
 
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// SYSTEM INPUT
+    ///////////////////////////////////////////////////////////////////////////////
     //cout << " Print information about new stream: " << endl;
     //cout << "Input datafilename, N_bath, N_slice, Ncut\n timestep, T, init_seed, Nsample\n w_max, eta, beta, delta,power " << endl;
     //cin >> datafilename >> N_bath >> N_slice >> Ncut >> timestep >> T >> init_seed >> Nsample >> w_max >> eta >> beta >> delta >> ppower;
@@ -129,8 +129,9 @@ int main(int argc, char *argv[]){
     hargzsum1  = new double[N_slice];
 
     ///////////////////////////////////////////////////////////////////////////////
-    /// INITIALIZATION OF THE SYSTEM
+    /// INITIALIZATION OF SYSTEM
     ///////////////////////////////////////////////////////////////////////////////
+
 
     dens_init[0] = dens_init_0; dens_init[1] = dens_init_1;
     dens_init[2] = dens_init_2; dens_init[3] = dens_init_3;
@@ -141,8 +142,7 @@ int main(int argc, char *argv[]){
     ddd =  delta*delta;
     TSLICE  = T/N_slice;
 
-    /*!< Defining Bath Parameters */
-    bath_para(eta, w_max);
+    bath_para(eta, w_max);       /*!< Defining Bath Parameters */
 
     for (i = 0; i < N_bath; ++i)
         mu[i] = beta*w[i]*0.5;
@@ -153,12 +153,12 @@ int main(int argc, char *argv[]){
     for (i = 0; i < N_bath; ++i)
         sig[i+N_bath] = 1.0*sqrt(w[i]/(2.0*tanh(mu[i])));
 
-    /*!< Defining force field */
+    /*! Defining force field */
     force[0] = F1;
     force[1] = Fb;
     force[2] = Fb;
     force[3] = F2;
-    /*!< Defining non-adiabatic coupling matrix */
+    /*! Defining non-adiabatic coupling matrix */
     setwww();
 
 
@@ -166,7 +166,7 @@ int main(int argc, char *argv[]){
     fprintf(stream,"%s\n w_max %lf eta %lf beta %lf delta %lf killz %lf N_bath %d N_slice %d\n", argv[0], w_max, eta, beta, delta, ppower, N_bath, N_slice);
     fclose(stream);
 
-    /*!< Initializing sum1 counters*/
+    /*! Initializing sum1 counters*/
     for (int i = 0; i < N_slice; ++i){
         abszsum1[i] = 0.0;
         argzsum1[i]  = 0.0;
@@ -196,6 +196,7 @@ int main(int argc, char *argv[]){
         }
     }*/
 
+
     stream = fopen(datafilename,"a");
     fprintf(stream,"dt %lf T %lf Nsample %d\n", timestep, T, Nsample);
     for (int i = 0; i < N_slice; ++i){
@@ -211,8 +212,10 @@ int main(int argc, char *argv[]){
 
     delete [] abszsum1; delete [] argzsum1; delete [] habszsum1; delete [] hargzsum1;
     delete [] mww; delete [] mu; delete [] sig;
+
     delete [] dgam; delete [] R1; delete [] v; delete [] f;
     delete [] c; delete [] m; delete [] w;
+
 
     return 0;
 

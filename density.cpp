@@ -1,3 +1,4 @@
+
 #include "density.h"
 using namespace std;
 #include <gsl/gsl_rng.h>
@@ -8,14 +9,7 @@ using namespace std;
 
 extern int N_bath;
 extern int Ncut;
-double abs_d;
-double Pdotdhat;
-double sina;
-double cosa;
-double de;
-
 extern double *m;
-double *dhat;
 extern int  N_slice;
 extern double TSLICE;
 extern double *abszsum1;
@@ -205,4 +199,3 @@ int  density(double *x,double *p){
     delete [] Pperp; delete [] dhat; delete [] RR; delete [] PP;
     return 0;
 }
-

@@ -6,24 +6,22 @@ using namespace std;
 /// VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
 
-//Same as in main
 extern int N_bath;
 extern double ddd;
 extern double ddd4;
 extern double delta;
+extern double abs_d;
 extern double timestep;
 extern double *dgam;
+extern double *dhat;
 extern double *mww;
 extern double *f;
 extern double *c;
 extern double *m;
 extern double *w;
 
-//Same as in density
 extern double cosa;
 extern double sina;
-extern double abs_d;
-extern double *dhat;
 extern double Pdotdhat;
 extern double de;
 
@@ -43,7 +41,6 @@ double gam(double *R){
     x += asyEps;    // asymmetric spin boson
     return -x;
 }
-
 
 /*! Bath Hamiltonian */
 double Hb(double *R, double *P){
@@ -93,6 +90,7 @@ double dE(double *R){
     return (sqrt(ddd + g));
 }
 
+
 double G(double *R){
     double x,g;
     g = gam(R);
@@ -137,7 +135,6 @@ void integ_step(double *r, double *v, double dt, int Sa){
     for (int i = 0; i < N_bath; ++i)
         v[i] += y*f[i];
 }
-
 
 /*! Parameters for bath (corresponding to an ohmic spectral density) */
 void bath_para(double eta, double w_max){
@@ -395,7 +392,6 @@ double wwa1_33(){
     return 9999.0;
 }
 
-
 /*! Non-adiabatic Coupling Matrix */
 void setwww(){
 
@@ -446,10 +442,11 @@ void setwww(){
 /// Observables and initial density Matrices
 ///////////////////////////////////////////////////////////////////////////////
 
+
+
 double wigner_harm_osc(double *x, double *p){
     return 1.0;
 }
-
 
 /*! Definition of initial density matrix element */
 double dens_init_0(double *x,double *p){
