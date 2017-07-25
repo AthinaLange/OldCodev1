@@ -1,3 +1,4 @@
+
 /*!
  * \brief Initizalize two arrays for position and momentum, based on a gaussian distribution
  */
@@ -8,13 +9,14 @@ using namespace std;
 
 #define PI 3.141592653589793
 
+
+//Global
 extern int N_bath;
 extern const gsl_rng_type * TT;
 extern gsl_rng * rr;
 extern double *sig;
 
 double ranVector[10001];
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

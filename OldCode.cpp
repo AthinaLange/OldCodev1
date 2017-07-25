@@ -45,45 +45,29 @@ double ppower; /*!< */
 
 double ddd4; /*!< */
 double ddd; /*!< */
-double abs_d; /*!< Absolute Value Non-adiabatic Coupling Matrix*/
-double Pdotdhat; /*!< Parallel component of momentum*/
-double sina;
-double cosa;
-double de; /*!< */
 double *m; /*!< Mass of particles */
 double *c; /*!< */
 double *w; /*!< */
 double *f; /*!< Force on particles */
-double *dhat; /*!< */
+
 double *dgam; /*!< */
 double *mww; /*!< */
 double *sig; /*!< Sigma/Variance */
 double *RR; /*!< */
 double *PP; /*!< */
-double *SS; /*!< */
-double alpha;
-double *Pperp; /*!< Perpendicular component of momentum */
 double *mu; /*!< */
 double TSLICE; /*!< */
 
-double abszsum0;
 double *abszsum1;
-double argzsum0;
 double *argzsum1;
-double habszsum0;
 double *habszsum1;
-double hargzsum0;
 double *hargzsum1;
-complex<double> I(0,1);
 
-double (*phi)(double*, double*); /*!< Density Matrix*/
 double (*dens_init[4])(double*, double*); /*!< Initial Density Matrix*/
 double (*obs[4])(double*, double*); /*!< Observable Matrix*/
 double (*obs1[4])(double*, double*); /*!< Another Observable Matrix*/
-
-
 void (*force[4])(double *); /*!< Hellman-Feynman Forces*/
-double (*www[2][4][4])(); /*!< Non-adiabatic Coupling Matrix*/
+
 
 // ================================================================
 // MAIN
@@ -95,6 +79,9 @@ int main(int argc, char *argv[]){
     double  *R1,  *v;
     double w_max, eta, T;
     int  i,init_seed;
+
+    int Nblock = 1024;
+    int t_strobe = 1;
 
     /*! Sets up the use of a Gaussian Random Number Generator from GSL */
     gsl_rng_env_setup();
@@ -132,7 +119,7 @@ int main(int argc, char *argv[]){
     mu = new double[N_bath];
     sig =  new double[2*N_bath];
     dgam = new double[N_bath];
-    dhat = new double[N_bath];
+
     R1 = new double[N_bath];
     v = new double[N_bath];
     f = new double[N_bath];
@@ -141,7 +128,7 @@ int main(int argc, char *argv[]){
     w = new double[N_bath];
     RR = new double[N_bath];
     PP = new double[N_bath];
-    SS = new double[N_slice];
+
     Pperp = new double[N_bath];
     abszsum1  = new double[N_slice];
     argzsum1  = new double[N_slice];
@@ -216,6 +203,7 @@ int main(int argc, char *argv[]){
         }
     }*/
 
+
     stream = fopen(datafilename,"a");
     fprintf(stream,"dt %lf T %lf Nsample %d\n", timestep, T, Nsample);
     for (int i = 0; i < N_slice; ++i){
@@ -231,8 +219,10 @@ int main(int argc, char *argv[]){
 
     delete [] abszsum1; delete [] argzsum1; delete [] habszsum1; delete [] hargzsum1;
     delete [] Pperp; delete [] mww; delete [] mu; delete [] sig;
-    delete [] dgam; delete [] dhat; delete [] R1; delete [] v; delete [] f;
-    delete [] c; delete [] m; delete [] w; delete [] RR; delete [] PP; delete [] SS;
+
+    delete [] dgam; delete [] R1; delete [] v; delete [] f;
+    delete [] c; delete [] m; delete [] w;
+
 
     return 0;
 

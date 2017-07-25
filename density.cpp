@@ -23,17 +23,20 @@ extern double *argzsum1;
 extern double *habszsum1;
 extern double *hargzsum1;
 
+extern double (*dens_init[4])(double*, double*); /*!< Initial Density Matrix*/
+extern double (*obs[4])(double*, double*); /*!< Observable Matrix*/
+extern double (*obs1[4])(double*, double*); /*!< Another Observable Matrix*/
 
-
-extern double (*www[2][4][4])();
-extern double (*phi)(double*, double*);
-extern double (*dens_init[4])(double*, double*);
-extern double (*obs[4])(double*, double*);
-extern double (*obs1[4])(double*, double*);
-
-extern const gsl_rng_type * TT;
+extern const gsl_rng_type * TT; /*!< Random Number Generator seed based on Gaussian Distribution */
 extern gsl_rng * rr;
 
+double abs_d; /*!< Absolute Value Non-adiabatic Coupling Matrix*/
+double Pdotdhat; /*!< Parallel component of momentum*/
+double sina;
+double cosa;
+double de; /*!< */
+double *dhat; /*!< */
+double (*www[2][4][4])(); /*!< Non-adiabatic Coupling Matrix*/
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,20 +45,28 @@ extern gsl_rng * rr;
 
 int  density(double *x,double *p){
 
-    int SS0,SS1,SS2,SS3,NNjmp = 0,signPdotdhat;
-    double phase0 = 0.0,xx;
-    double p0,p1,p2,p3,ap0,ap1,ap2,ap3;
+    int SS0, SS1, SS2, SS3, NNjmp = 0, signPdotdhat;
+    double phase0 = 0.0, xx;
+    double p0, p1, p2, p3, ap0, ap1, ap2, ap3;
     double dn2;
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// ALLOCATING MEMORY
+    ///////////////////////////////////////////////////////////////////////////////
     complex<double> z(1,0);
     complex<double> oldz;
     complex<double> initd(1,0);
     complex<double> I(0,1);
-    double *Pperp;
+
+    double *Pperp; /*!< Perpendicular component of momentum */
+    double (*phi)(double*, double*); /*!< Density Matrix*/
+
     double *RR;
     double *PP;
     RR = new double[N_bath];
     PP = new double[N_bath];
     Pperp = new double[N_bath];
+    dhat = new double[N_bath];
 
     ///////////////////////////////////////////////////////////////////////////////
     /// INITIALIZATION OF INITIAL SURFACE
@@ -78,6 +89,7 @@ int  density(double *x,double *p){
         SS3 = (SS0 = 3);
     initd = dens_init[SS3](x,p);
     z = 4.0;
+
     /*!< Allocating values for position and momentum from Gaussian */
     for (int l = 0; l < N_bath; ++l){
         RR[l] = x[l];
@@ -130,6 +142,7 @@ int  density(double *x,double *p){
         cout << "Prob:" << "ap0: " << ap0 <<", ap1: "<< ap1 <<", ap2: " << ap2 <<", ap3:"<< ap3 << endl;
         oldz = z;
         SS2 = SS1;
+
         /*!< choose new surface based on probabilities from matrix above
          * calculates new values for the probability weighting
          */
@@ -159,6 +172,7 @@ int  density(double *x,double *p){
         if (NNjmp > Ncut)
             return 0;
 
+
         /*!< updating momentum values */
         if (www[1][SS0][SS1]() != 9999.0){
             for (int i = 0; i < N_bath; ++i) {
@@ -183,6 +197,12 @@ int  density(double *x,double *p){
         habszsum1[l] += real(z*phi(RR,PP)*initd);
         hargzsum1[l] += imag(z*phi(RR,PP)*initd);
     }
-    delete [] RR; delete [] PP; delete [] Pperp;
+
+    ///////////////////////////////////////////////////////////////////////////////
+    /// DEALLOCATING MEMEORY
+    ///////////////////////////////////////////////////////////////////////////////
+
+    delete [] Pperp; delete [] dhat; delete [] RR; delete [] PP;
     return 0;
 }
+
