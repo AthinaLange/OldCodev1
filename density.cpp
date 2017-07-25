@@ -6,13 +6,18 @@ using namespace std;
 /// VARIABLE DEFINITION
 ///////////////////////////////////////////////////////////////////////////////
 
-extern int N_bath; /*!< Size of bath */
-extern int Ncut; /*!< Truncation parameter */
-extern double *m; /*!< Mass of particles */
-extern int timestep;
-extern int N_slice; /*!< Number of time intervals */
-extern double TSLICE; /*!< */
+extern int N_bath;
+extern int Ncut;
+double abs_d;
+double Pdotdhat;
+double sina;
+double cosa;
+double de;
 
+extern double *m;
+double *dhat;
+extern int  N_slice;
+extern double TSLICE;
 extern double *abszsum1;
 extern double *argzsum1;
 extern double *habszsum1;
@@ -52,15 +57,16 @@ int  density(double *x,double *p){
     complex<double> oldz;
     complex<double> initd(1,0);
     complex<double> I(0,1);
+
     double *Pperp; /*!< Perpendicular component of momentum */
     double (*phi)(double*, double*); /*!< Density Matrix*/
+
     double *RR;
     double *PP;
     RR = new double[N_bath];
     PP = new double[N_bath];
     Pperp = new double[N_bath];
     dhat = new double[N_bath];
-
 
     ///////////////////////////////////////////////////////////////////////////////
     /// INITIALIZATION OF INITIAL SURFACE
