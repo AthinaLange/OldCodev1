@@ -1,3 +1,7 @@
+/*!
+ * \brief Initizalize two arrays for position and momentum, based on a gaussian distribution
+ */
+
 #include "random.h"
 using namespace std;
 #include <gsl/gsl_rng.h>
@@ -20,13 +24,10 @@ double ranVector[10001];
 
 double  gauss1(double sigma_x, int i){
     double x1,y1,y2,y3;
-
     y1 = ranVector[i];
-
     while (fabs(y1) < 1.0e-200){
         y1 = gsl_rng_uniform (rr);
     }
-
     y2 = ranVector[i+N_bath];
     y3 = sqrt(-2*log(y1));
     x1 = y3*cos(2*PI*y2);
@@ -41,7 +42,6 @@ void randnums(int rand_dim, double *rand_vec){
 
 void gauss_init_W(double *R, double *v){ /*!< Gaussian number generator  for (R,P) */
     double sigma_x, sigma_v;
-
     randnums(4*N_bath, ranVector);
     for (int i = 0; i < N_bath; ++i){
         sigma_x = sig[i];

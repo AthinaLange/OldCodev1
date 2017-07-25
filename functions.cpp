@@ -26,7 +26,6 @@ extern double Pdotdhat;
 extern double de;
 
 extern double (* www[2][4][4])();
-
 extern void (*force[4])(double *);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,34 +42,39 @@ double gam(double *R){
     return -x;
 }
 
-double Hb(double *R, double *P){ /* Bath Hamiltonian */
+/*! Bath Hamiltonian */
+double Hb(double *R, double *P){
     double x = 0.0;
     for (int i = 0; i < N_bath; ++i)
         x += P[i]*P[i] - mww[i]*R[i]*R[i];
     return x*0.5;
 }
 
+/*! Derivative of gam */
 void dgamma(double *R){
     for (int i = 0; i < N_bath; ++i)
         dgam[i] = -c[i];
 }
 
-void Fb(double *R){ /*!< Pure Bath Force Field */
+/*! Pure Bath Force Field */
+void Fb(double *R){
     double x;
     for (int i= 0; i < N_bath; ++i)
         f[i] = mww[i]*R[i];
 }
 
-void F1(double *R){ /*!< 00 force field   */
+/*! 00 force field */
+void F1(double *R){
     double g,h;
     g = gam(R);
     h = g/sqrt(ddd4 + g*g);
     for (int i = 0; i < N_bath; ++i){
-        f[i]  = mww[i]*R[i] -  h*c[i];
+        f[i]  = mww[i]*R[i] - h*c[i];
     }
 }
 
-void F2(double *R){ /*!< 11 force field */
+/*! 11 force field */
+void F2(double *R){
     double g,h;
     g = gam(R);
     h = g/sqrt(ddd4 + g*g);
@@ -78,12 +82,14 @@ void F2(double *R){ /*!< 11 force field */
         f[i] = mww[i]*R[i] + h*c[i];
 }
 
-double dE(double *R){ /*!< Energy difference between adiabiatic surface (E1 - E0) */
+/*! Energy difference between adiabatic surface (E1 - E0) */
+double dE(double *R){
     double g;
     g = gam(R);
     g *= 4.0*g;
     return (sqrt(ddd + g));
 }
+
 
 double G(double *R){
     double x,g;
@@ -94,7 +100,8 @@ double G(double *R){
     return x;
 }
 
-void dd(double*R){ /*!< Energy */
+/*! Energy */
+void dd(double*R){
     double x1,x2,x3;
     int i;
     x2 = gam(R);
@@ -115,7 +122,8 @@ void dd(double*R){ /*!< Energy */
         dhat[i] /= abs_d;
 }
 
-void integ_step(double *r, double *v, double dt, int Sa){ /*!< Velocity Verlet */
+/*! Velocity Verlet */
+void integ_step(double *r, double *v, double dt, int Sa){
     double y;
     y = 0.5*dt*dt;
     for (int i = 0; i < N_bath; ++i)
@@ -128,7 +136,8 @@ void integ_step(double *r, double *v, double dt, int Sa){ /*!< Velocity Verlet *
         v[i] += y*f[i];
 }
 
-void bath_para(double eta, double w_max){ /*!< Parameters for bath (corresponding to an ohmic spectral density) */
+/*! Parameters for bath (corresponding to an ohmic spectral density) */
+void bath_para(double eta, double w_max){
     double w_0;
     w_0 = (1 - exp(-w_max))/N_bath;
     for (int i = 0; i < N_bath; ++i){
@@ -138,7 +147,8 @@ void bath_para(double eta, double w_max){ /*!< Parameters for bath (correspondin
     }
 }
 
-double U( double *r,double *v, int Sa, double t){ /*!< Adiabatic Propagator */
+/*! Adiabatic Propagator */
+double U( double *r,double *v, int Sa, double t){
     double  dE0, phase,dt,x1,x2,x3,v1,v2,v3;
     int Nsteps;
 
@@ -382,6 +392,7 @@ double wwa1_33(){
     return 9999.0;
 }
 
+/*! Non-adiabatic Coupling Matrix */
 void setwww(){
 
     // W_{a0}
@@ -433,13 +444,11 @@ void setwww(){
 
 
 
-/*! Definition of initial density matrix element */
-
-
 double wigner_harm_osc(double *x, double *p){
     return 1.0;
 }
 
+/*! Definition of initial density matrix element */
 double dens_init_0(double *x,double *p){
     double z;
     double g,gg;
@@ -525,4 +534,3 @@ double H_3(double *x,double *p){
     z = Hb(x,p) + dE(x)*0.5;
     return z;
 }
-
