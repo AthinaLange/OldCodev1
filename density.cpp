@@ -8,16 +8,15 @@ using namespace std;
 
 extern int N_bath;
 extern int Ncut;
-extern double abs_d;
-extern double Pdotdhat;
-extern double sina;
-extern double cosa;
-extern double de;
+double abs_d;
+double Pdotdhat;
+double sina;
+double cosa;
+double de;
 
 extern double *m;
-extern double *dhat;
+double *dhat;
 extern int  N_slice;
-extern double *Pperp;
 extern double TSLICE;
 extern double *abszsum1;
 extern double *argzsum1;
@@ -51,10 +50,12 @@ int  density(double *x,double *p){
     complex<double> oldz;
     complex<double> initd(1,0);
     complex<double> I(0,1);
+    double *Pperp;
     double *RR;
     double *PP;
     RR = new double[N_bath];
     PP = new double[N_bath];
+    Pperp = new double[N_bath];
 
     ///////////////////////////////////////////////////////////////////////////////
     /// INITIALIZATION OF INITIAL SURFACE
@@ -182,6 +183,6 @@ int  density(double *x,double *p){
         habszsum1[l] += real(z*phi(RR,PP)*initd);
         hargzsum1[l] += imag(z*phi(RR,PP)*initd);
     }
-    delete [] RR; delete [] PP;
+    delete [] RR; delete [] PP; delete [] Pperp;
     return 0;
 }
