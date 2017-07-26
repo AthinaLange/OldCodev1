@@ -25,7 +25,7 @@ double dE(double *R);
 
 double G(double *R);
 
-void dd(double *R);
+void dd(double *dhat, double *R);
 
 void integ_step(double *r, double *v, double dt, int Sa);
 

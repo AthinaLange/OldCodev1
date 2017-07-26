@@ -10,20 +10,19 @@ extern int N_bath;
 extern double ddd;
 extern double ddd4;
 extern double delta;
-extern double abs_d;
 extern double timestep;
 extern double *dgam;
-extern double *dhat;
 extern double *mww;
 extern double *f;
 extern double *c;
 extern double *m;
 extern double *w;
+extern double abs_d;
 
-extern double cosa;
+extern double Pdotdhat; /*!< Parallel component of momentum*/
 extern double sina;
-extern double Pdotdhat;
-extern double de;
+extern double cosa;
+extern double de; /*!< */
 
 extern double (* www[2][4][4])();
 extern void (*force[4])(double *);
@@ -101,7 +100,7 @@ double G(double *R){
 }
 
 /*! Energy */
-void dd(double*R){
+void dd(double *dhat, double *R){
     double x1,x2,x3;
     int i;
     x2 = gam(R);

@@ -1,3 +1,16 @@
+/*!
+ *  \mainpage
+ *  \brief Using a Trotter Approximation to calculate a quantum-classical non-adiabatic approximation to
+ * separate the quantum and the quasi-classical degrees of freedom to allow a surface-hopping scheme to
+ * be implemented that creates a tree-like structure.
+ *
+ * This code follows one of the possible paths through the tree structure. The non-adiabatic propagator
+ * determines the likelihood of a jump based on importance sampling
+ *
+ * \author Donal MacKernan, Athina Lange and Philip McGrath.
+ * \date 24.7.17
+ */
+
 #include   <stdio.h>
 #include   <math.h>
 #include   <iostream>
@@ -7,19 +20,6 @@
 
 using namespace std;
 #include <gsl/gsl_rng.h>
-
-/*!
- *  \brief Using a Trotter Approximation to calculate a quantum-classical non-adiabatic approximation to
- * separate the quantum and the quasi-classical degrees of freedom to allow a surface-hopping scheme to
- * be implemented that creates a tree-like structure.
- *
- * This code follows one of the possible paths through the tree structure. The non-adiabatic propagator
- * determines the likelihood of a jump based on importance sampling
- *
- * \author Donal MacKernan and Athina Lange.
- * \date 24.7.17
- */
-
 
 
 
@@ -40,11 +40,12 @@ int Ncut; /*!< Truncation parameter */
 double timestep; /*!< Size of time interval */
 int Nsample; /*!< Sample Size (No. of trees calculated) */
 double beta; /*!< Inverse Temperature */
-double delta; /*!< MD Integrating Timestep*/
+double delta; /*!< MD Integrating Timestep \f$ (\delta) \f$*/
 double ppower; /*!< */
 
-double ddd4; /*!< */
-double ddd; /*!< */
+
+double ddd; /*!<  \f$ \delta^2 \f$ */
+double ddd4; /*!< \f$ \delta^2/4 \f$ */
 double *m; /*!< Mass of particles */
 double *c; /*!< */
 double *w; /*!< */
@@ -54,7 +55,12 @@ double *dgam; /*!< */
 double *mww; /*!< */
 double *sig; /*!< Sigma/Variance */
 double *mu; /*!< */
-double TSLICE; /*!< */
+double TSLICE; /*!< Time per time interval*/
+
+//double Pdotdhat;
+//double sina;
+//double cosa;
+//double de;
 
 double *abszsum1;
 double *argzsum1;
@@ -97,7 +103,7 @@ int main(int argc, char *argv[]){
     cout << "Input datafilename" << endl;
     cin >> datafilename;
     N_bath = 200;
-    N_slice = 60;
+    N_slice = 20;
     Ncut = 10;
     timestep = 0.05;
     T = 15;
@@ -158,8 +164,7 @@ int main(int argc, char *argv[]){
     force[1] = Fb;
     force[2] = Fb;
     force[3] = F2;
-    /*! Defining non-adiabatic coupling matrix */
-    setwww();
+
 
 
     stream = fopen(datafilename,"w");
@@ -174,6 +179,10 @@ int main(int argc, char *argv[]){
         hargzsum1[i] = 0.0;
     }
 
+    /// PARALLEL DIRECTIVE
+
+    /*! Defining non-adiabatic coupling matrix */
+    setwww();
     ///////////////////////////////////////////////////////////////////////////////
     /// PROCESSING TREE
     ///////////////////////////////////////////////////////////////////////////////
