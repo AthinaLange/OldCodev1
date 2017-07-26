@@ -9,12 +9,7 @@ using namespace std;
 extern int N_bath;
 extern int Ncut;
 
-double Pdotdhat;
-double sina;
-double cosa;
-double de;
 double abs_d;
-double (*www[2][4][4])();
 
 extern double *m;
 extern int  N_slice;
@@ -31,7 +26,7 @@ extern double (*obs1[4])(double*, double*);
 extern const gsl_rng_type * TT;
 extern gsl_rng * rr;
 
-
+double (*www[2][4][4])(double cosa, double sina, double de, double Pdotdhat);
 
 ///////////////////////////////////////////////////////////////////////////////
 /// PROCESSING TREE
@@ -56,6 +51,11 @@ int  density(double *x,double *p){
     PP = new double[N_bath];
     dhat = new double[N_bath];
     Pperp = new double[N_bath];
+
+    double Pdotdhat;
+    double sina;
+    double cosa;
+    double de;
 
 
 
@@ -122,10 +122,10 @@ int  density(double *x,double *p){
         cosa = cos(alpha);
 
         /*!< Importance Sampling - non-adiabatic coupling matrix gives probabilities */
-        ap0 = fabs(p0 = ((www[1][SS0][0]() < -7775.0) ? 0.0 : www[0][SS0][0]()));
-        ap1 = fabs(p1 = ((www[1][SS0][1]() < -7775.0) ? 0.0 : www[0][SS0][1]()));
-        ap2 = fabs(p2 = ((www[1][SS0][2]() < -7775.0) ? 0.0 : www[0][SS0][2]()));
-        ap3 = fabs(p3 = ((www[1][SS0][3]() < -7775.0) ? 0.0 : www[0][SS0][3]()));
+        ap0 = fabs(p0 = ((www[1][SS0][0](cosa, sina, de, Pdotdhat) < -7775.0) ? 0.0 : www[0][SS0][0](cosa, sina, de, Pdotdhat)));
+        ap1 = fabs(p1 = ((www[1][SS0][1](cosa, sina, de, Pdotdhat) < -7775.0) ? 0.0 : www[0][SS0][1](cosa, sina, de, Pdotdhat)));
+        ap2 = fabs(p2 = ((www[1][SS0][2](cosa, sina, de, Pdotdhat) < -7775.0) ? 0.0 : www[0][SS0][2](cosa, sina, de, Pdotdhat)));
+        ap3 = fabs(p3 = ((www[1][SS0][3](cosa, sina, de, Pdotdhat) < -7775.0) ? 0.0 : www[0][SS0][3](cosa, sina, de, Pdotdhat)));
         dn2 = ap0 + ap1 + ap2 + ap3;
         xx = dn2 * (gsl_rng_uniform(rr));   // choosing matrix elements
         //alpha goes to 0, pdotdhat very small, matrix becomes identiy and prob of jumping goes to 0
@@ -162,9 +162,9 @@ int  density(double *x,double *p){
             return 0;
 
         /*! updating momentum values */
-        if (www[1][SS0][SS1]() != 9999.0){
+        if (www[1][SS0][SS1](cosa, sina, de, Pdotdhat) != 9999.0){
             for (int i = 0; i < N_bath; ++i) {
-                PP[i] = Pperp[i] + signPdotdhat * www[1][SS0][SS1]() * dhat[i];
+                PP[i] = Pperp[i] + signPdotdhat * www[1][SS0][SS1](cosa, sina, de, Pdotdhat) * dhat[i];
             }
         }
 

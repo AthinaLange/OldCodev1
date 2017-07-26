@@ -103,7 +103,7 @@ int main(int argc, char *argv[]){
     cout << "Input datafilename" << endl;
     cin >> datafilename;
     N_bath = 200;
-    N_slice = 20;
+    N_slice = 60;
     Ncut = 10;
     timestep = 0.05;
     T = 15;

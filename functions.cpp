@@ -19,12 +19,12 @@ extern double *m;
 extern double *w;
 extern double abs_d;
 
-extern double Pdotdhat; /*!< Parallel component of momentum*/
-extern double sina;
-extern double cosa;
-extern double de; /*!< */
+//extern double Pdotdhat; /*!< Parallel component of momentum*/
+//extern double sina;
+//extern double cosa;
+//extern double de; /*!< */
 
-extern double (* www[2][4][4])();
+extern double (*www[2][4][4])(double cosa, double sina, double de, double Pdotdhat);
 extern void (*force[4])(double *);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,97 +191,97 @@ double U( double *r,double *v, int Sa, double t){
 /* Q1 */
 
 
-double wwa0_00(){
+double wwa0_00(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = 1 + cosa;
     return x*0.5;
 }
 
-double wwa0_01(){
+double wwa0_01(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = -sina;
     return x*0.5;
 }
 
-double wwa0_02(){
+double wwa0_02(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = -sina;
     return x*0.5;
 }
 
-double wwa0_03(){
+double wwa0_03(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = 1.0 - cosa;
     return x*0.5;
 }
 
-double wwa0_10(){
+double wwa0_10(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = sina;
     return x*0.5;
 }
 
-double wwa0_11(){
+double wwa0_11(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = 1.0 + cosa;
     return x*0.5;
 }
 
-double wwa0_12(){
+double wwa0_12(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = -1.0 + cosa;
     return x*0.5;
 }
 
-double wwa0_13(){
+double wwa0_13(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = -sina;
     return x*0.5;
 }
 
-double wwa0_20(){
+double wwa0_20(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = sina;
     return x*0.5;
 }
 
-double wwa0_21(){
+double wwa0_21(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = -1.0 + cosa ;
     return x*0.5;
 }
 
-double wwa0_22(){
+double wwa0_22(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = 1.0 + cosa;
     return x*0.5;
 }
 
-double wwa0_23(){
+double wwa0_23(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = -sina ;
     return x*0.5;
 }
 
-double wwa0_30(){
+double wwa0_30(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = 1 - cosa;
     return x*0.5;
 }
 
-double wwa0_31(){
+double wwa0_31(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x =  sina;
     return x*0.5;
 }
 
-double wwa0_32(){
+double wwa0_32(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = sina;
     return x*0.5;
 }
 
-double wwa0_33(){
+double wwa0_33(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = 1 + cosa;
     return x*0.5;
@@ -291,11 +291,11 @@ double wwa0_33(){
 
 /* _____________________________________________  */
 
-double wwa1_00(){
+double wwa1_00(double cosa, double sina, double de, double Pdotdhat){
     return 9999.0;
 }
 
-double wwa1_01(){
+double wwa1_01(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat - de;
     if (x <= 0)
@@ -304,7 +304,7 @@ double wwa1_01(){
         return sqrt(x);
 }
 
-double wwa1_02(){
+double wwa1_02(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat - de;
     if (x <= 0)
@@ -313,7 +313,7 @@ double wwa1_02(){
         return sqrt(x);
 }
 
-double wwa1_03(){
+double wwa1_03(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat - 2.0*de;
     if (x <= 0)
@@ -322,21 +322,21 @@ double wwa1_03(){
         return sqrt(x);
 }
 
-double wwa1_10(){
+double wwa1_10(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat + de;
     return sqrt(x);
 }
 
-double wwa1_11(){
+double wwa1_11(double cosa, double sina, double de, double Pdotdhat){
     return 9999.0;
 }
 
-double wwa1_12(){
+double wwa1_12(double cosa, double sina, double de, double Pdotdhat){
     return 9999.0;
 }
 
-double wwa1_13(){
+double wwa1_13(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat - de;
     if (x <= 0)
@@ -345,22 +345,22 @@ double wwa1_13(){
         return sqrt(x);
 }
 
-double wwa1_20(){
+double wwa1_20(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat + de;
     return sqrt(x);
 }
 
-double wwa1_21(){
+double wwa1_21(double cosa, double sina, double de, double Pdotdhat){
     return 9999.0;
 
 }
 
-double wwa1_22(){
+double wwa1_22(double cosa, double sina, double de, double Pdotdhat){
     return 9999.0;
 }
 
-double wwa1_23(){
+double wwa1_23(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat - de;
     if (x <= 0)
@@ -369,25 +369,25 @@ double wwa1_23(){
         return sqrt(x);
 }
 
-double wwa1_30(){
+double wwa1_30(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat + 2.0*de;
     return sqrt(x);
 }
 
-double wwa1_31(){
+double wwa1_31(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat + de;
     return sqrt(x);
 }
 
-double wwa1_32(){
+double wwa1_32(double cosa, double sina, double de, double Pdotdhat){
     double x;
     x = Pdotdhat*Pdotdhat + de;
     return sqrt(x);
 }
 
-double wwa1_33(){
+double wwa1_33(double cosa, double sina, double de, double Pdotdhat){
     return 9999.0;
 }
 
